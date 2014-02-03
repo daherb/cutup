@@ -85,10 +85,9 @@ else
       end
       $offset += $buff_size
     end
-    $lows.push(reader.total_sample_frames) # Add end for final par
-    puts reader.total_sample_frames
+    $lows.push(reader.total_sample_frames) # Add end for final part
   end
-  puts "Got " + ($lows.size - 1).to_s + " Positions with average length of " + $sum_lows.fdiv($count_lows).to_s + " and maximum length of " + $longest_low.to_s + " when using cut-off at " +ARGV[1] + " consecutive samples under average amplitude"
+  puts "Got " + ($lows.size - 1).to_s + " Positions with average length of " + $sum_lows.fdiv($count_lows).to_s + " and maximum length of " + $longest_low.to_s + " when using cut-off at " +ARGV[1] + " consecutive samples below average amplitude"
   
 end
 puts $lows.to_s
@@ -106,7 +105,7 @@ Writer.new(ARGV[3], Format.new(:stereo, :pcm_16, 44100)) do |writer|
       begin
         if $lows[p]> 0 then 
           $buff_size = $BUFF_CONST
-          while ($buff_size > $lows[p]-1 - reader.current_sample_frame)
+          while ($buff_size < $lows[p]-1 - reader.current_sample_frame)
             reader.read($buff_size) 
           end 
           reader.read($lows[p]-1 - reader.current_sample_frame)
@@ -116,7 +115,7 @@ Writer.new(ARGV[3], Format.new(:stereo, :pcm_16, 44100)) do |writer|
       end
       begin
         $buff_size = $BUFF_CONST
-        while ($buff_size >$lows[p+1] - reader.current_sample_frame)
+        while ($buff_size < $lows[p+1] - reader.current_sample_frame)
           data = reader.read($buff_size)
           writer.write(data)
         end
