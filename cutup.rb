@@ -9,6 +9,10 @@ end
 
 def usage
   puts "Usage: ruby cutup.rb wave-file delta sequence out-file";
+  puts "  wave-file: the input to be reordered"
+  puts "  delta: the deviation below average to count as \"quiet\""
+  puts "  sequence: the number of consecutive samples to count as a \"break\""
+  puts "  out-file: the new file to be written"
   exit
 end
 
@@ -87,7 +91,7 @@ else
     end
     $lows.push(reader.total_sample_frames) # Add end for final part
   end
-  puts "Got " + ($lows.size - 1).to_s + " Positions with average length of " + $sum_lows.fdiv($count_lows).to_s + " and maximum length of " + $longest_low.to_s + " when using cut-off at " +ARGV[1] + " consecutive samples below average amplitude"
+  puts "Got " + ($lows.size - 1).to_s + " Positions with average length of " + $sum_lows.fdiv($count_lows).to_s + " and maximum length of " + $longest_low.to_s + " when using cut-off at " +ARGV[2] + " consecutive samples below average amplitude"
   
 end
 puts $lows.to_s
